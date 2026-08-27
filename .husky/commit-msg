@@ -1,0 +1,53 @@
+#!/usr/bin/env sh
+# commit-msg: enforce Conventional Commits format and forbid AI attribution.
+# See .claude/rules/git-workflow.md. Human co-authors are allowed; AI ones are not.
+
+msg_file="$1"
+
+# Case-insensitive list of forbidden AI identities (edit this one line to adjust).
+AI_IDENTITIES='claude|anthropic|codex|openai|chatgpt|gpt-|cursor|copilot|gemini|bard|devin|noreply@anthropic\.com'
+
+# Strip the verbose-diff scissors section and comment lines to get the real message.
+cleaned="$(sed '/^# ------------------------ >8 ------------------------$/,$d' "$msg_file" | grep -v '^#')"
+
+# Subject = first non-blank line.
+subject="$(printf '%s\n' "$cleaned" | grep -m1 -v '^[[:space:]]*$')"
+
+fail() {
+  echo ""
+  echo "✖ commit-msg rejected: $1"
+  echo ""
+  exit 1
+}
+
+# 1) Skip machinery commits (merges, reverts, fixups).
+case "$subject" in
+  "Merge "*|"Revert "*|"fixup!"*|"squash!"*|"amend!"*) exit 0 ;;
+esac
+
+# 2) Conventional Commits format on the subject line.
+if ! printf '%s' "$subject" | grep -Eq '^(feat|fix|docs|chore|test|refactor|perf|ci|build|style|revert)(\([a-z0-9/_,.-]+\))?!?: .+'; then
+  echo "✖ commit-msg rejected: subject is not a Conventional Commit."
+  echo "  Subject: $subject"
+  echo "  Expected: <type>(optional-scope): <description>"
+  echo "  Types:    feat fix docs chore test refactor perf ci build style revert"
+  echo "  Example:  feat(api): add event creation endpoint"
+  exit 1
+fi
+
+# 3) No AI attribution anywhere in the message.
+if printf '%s\n' "$cleaned" | grep -Eiq "^[[:space:]]*co-authored-by:.*(${AI_IDENTITIES})"; then
+  offending="$(printf '%s\n' "$cleaned" | grep -Ei "^[[:space:]]*co-authored-by:.*(${AI_IDENTITIES})" | head -1)"
+  fail "AI co-author trailers are not allowed in this repo.
+  Offending line: ${offending}
+  Remove it. Human co-authors are fine; AI agents (Claude/Codex/Cursor/…) are not."
+fi
+
+if printf '%s\n' "$cleaned" | grep -Eiq "(generated with|🤖).*(${AI_IDENTITIES})|(${AI_IDENTITIES}).*(generated|assisted this commit)"; then
+  offending="$(printf '%s\n' "$cleaned" | grep -Ei "(generated with|🤖).*(${AI_IDENTITIES})|(${AI_IDENTITIES}).*(generated|assisted this commit)" | head -1)"
+  fail "AI generation signatures are not allowed in the commit message.
+  Offending line: ${offending}
+  Remove any '🤖 Generated with …' / AI-assistant credit line."
+fi
+
+exit 0
