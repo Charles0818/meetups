@@ -20,12 +20,12 @@ Decomposition of the PRD (`docs/PRD.md`) into **epics → tasks → subtasks**, 
 ### - [ ] E0. Discovery & de-risking
 Goal: kill the two assumptions that can invalidate the build before writing app code.
 
-- [ ] **E0.T1 — Host interviews (×10)** → PRD §7 Q1
-  - [ ] E0.T1.1 Draft the interview guide (2 core questions + probes).
-  - [ ] E0.T1.2 Recruit 10 people currently running recurring free meetups.
-  - [ ] E0.T1.3 Run all 10 sessions; capture verbatim notes.
-  - [ ] E0.T1.4 Tag responses: money-in-payments / money-in-list / money-nowhere.
-  - [ ] E0.T1.5 Write a one-page findings memo with a go / no-go recommendation.
+- [ ] **E0.T1 — Host interviews (×10)** → PRD §7 Q1  _(provisional: simulated proxy done — see `docs/research/`; real interviews still gate)_
+  - [x] E0.T1.1 Draft the interview guide (2 core questions + probes).
+  - [ ] E0.T1.2 Recruit 10 people currently running recurring free meetups.  _(outstanding — simulated only)_
+  - [ ] E0.T1.3 Run all 10 sessions; capture verbatim notes.  _(outstanding — 5 simulated personas run as proxy)_
+  - [x] E0.T1.4 Tag responses: money-in-payments / money-in-list / money-nowhere.  _(applied to simulated set)_
+  - [x] E0.T1.5 Write a one-page findings memo with a go / no-go recommendation.  _(provisional — `docs/research/discovery-findings.md`)_
   - **AC:**
     - 10 interviews completed and notes stored in `docs/research/`.
     - Findings memo states a clear position on the recurring-host thesis and a first read on willingness to pay.
