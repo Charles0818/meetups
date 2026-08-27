@@ -1,7 +1,15 @@
 node_modules/
-.env
-.env.local
 dist/
 .next/
+out/
+.turbo/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
 *.log
 .DS_Store
+
+# env — keep example files, ignore real ones
+.env
+.env.*
+!.env.example
